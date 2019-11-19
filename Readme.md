@@ -1,7 +1,7 @@
 # Личный проект «Менеджер задач» [![Build status][travis-image]][travis-url]
 
 * Студент: [Григорьев Константин](https://up.htmlacademy.ru/ecmascript/10/user/1075187).
-* Наставник: `Неизвестно`.
+* Наставник: `Нет`.
 
 ---
 

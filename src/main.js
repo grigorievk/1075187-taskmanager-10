@@ -30,7 +30,7 @@ const menuTpl = () => {
           <label for="control__statistic" class="control__label"
             >STATISTICS</label
           >
-        </section>`
+        </section>`;
 };
 const filterMainTpl = () => {
   return `<section class="main__filter filter container">
@@ -396,7 +396,7 @@ const buttonLoadMoreTpl = () => {
   return `<button class="load-more" type="button">load more</button>`;
 };
 
-function render (selector, template, placing) {
+function render(selector, template, placing) {
   document.querySelector(selector).insertAdjacentHTML(placing, template);
 }
 
@@ -408,7 +408,7 @@ render(`.board__tasks`, addCardFormTpl(), `beforeend`);
 
 new Array(TASK_COUNT)
   .fill(``)
-  .map((e, i) => {
+  .map(() => {
     return render(`.board__tasks`, cardTpl(), `beforeend`);
   })
   .join(``);

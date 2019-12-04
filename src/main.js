@@ -1,28 +1,38 @@
-import {menuTpl} from "./components/menu";
-import {filterMainTpl} from "./components/filter";
-import {contentTpl} from "./components/content";
-import {filterBoardTpl} from "./components/filter-board";
-import {addCardFormTpl} from "./components/card-edit";
-import {cardTpl} from "./components/card";
-import {buttonLoadMoreTpl} from "./components/button-more";
+import {createSiteMenuTemplate} from "./components/menu";
+import {createFilterTemplate} from "./components/filter";
+import {createContentTemplate} from "./components/content";
+import {createFilterBoardTemplate} from "./components/filter-board";
+import {createTaskEditTemplate} from "./components/task-edit";
+import {createTaskTemplate} from "./components/task";
+import {createButtonLoadMoreTemplate} from "./components/button-more";
 
-const TASK_COUNT = 3;
+import {getTaskData, generateTaskData} from "./mock-data/task.data";
+import {getFilterData} from "./mock-data/filter.data";
+
+const TASK_PER_PAGE = 8;
+// let currentTaskSlot = 1;
+let taskData = generateTaskData((TASK_PER_PAGE * 3) + 1); // generate 3 slots of cards + 1 for first editable card
+const firstTaskData = taskData.shift();
 
 function render(selector, template, placing) {
   document.querySelector(selector).insertAdjacentHTML(placing, template);
 }
 
-render(`.main__control`, menuTpl(), `beforeend`);
-render(`.main`, filterMainTpl(), `beforeend`);
-render(`.main`, contentTpl(), `beforeend`);
-render(`.board.container`, filterBoardTpl(), `afterbegin`);
-render(`.board__tasks`, addCardFormTpl(), `beforeend`);
+render(`.main__control`, createSiteMenuTemplate(), `beforeend`);
 
-new Array(TASK_COUNT)
+const filterData = getFilterData(taskData);
+render(`.main`, createFilterTemplate(filterData), `beforeend`);
+render(`.main`, createContentTemplate(), `beforeend`);
+render(`.board.container`, createFilterBoardTemplate(), `afterbegin`);
+
+const taskListSelector = `.board__tasks`;
+render(taskListSelector, createTaskEditTemplate(firstTaskData), `beforeend`);
+
+new Array((TASK_PER_PAGE - 1)) // exclude first editable task
   .fill(``)
-  .map(() => {
-    return render(`.board__tasks`, cardTpl(), `beforeend`);
+  .map((e, i) => {
+    return render(taskListSelector, createTaskTemplate(taskData[i]), `beforeend`);
   })
   .join(``);
 
-render(`.board`, buttonLoadMoreTpl(), `beforeend`);
+render(`.board`, createButtonLoadMoreTemplate(), `beforeend`);

@@ -17,7 +17,7 @@ export const getFilterData = (taskData) => ([
   },
   {
     title: `Repeating`,
-    count: taskData.filter((i) => Object.keys(i.repeatingDays).some(day => i.repeatingDays[day])).length
+    count: taskData.filter((i) => Object.keys(i.repeatingDays).some((day) => i.repeatingDays[day])).length
   },
   {
     title: `Tags`,

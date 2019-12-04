@@ -1,4 +1,4 @@
-import {Colors} from "../data/const";
+import {COLORS} from "../data/const";
 
 const DescriptionList = [
   `Изучить теорию`,
@@ -51,7 +51,7 @@ export const getTaskData = () => {
     get tagList() {
       return Array.from(TagList).filter((t, i) => i === getRndIntNumber(3));
     },
-    color: getRndArrayItem(Colors),
+    color: getRndArrayItem(COLORS),
     isFavorite: getRndBoolean(),
     isArchive: getRndBoolean()
   };

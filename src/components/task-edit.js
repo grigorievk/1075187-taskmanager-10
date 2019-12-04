@@ -1,4 +1,4 @@
-import {Colors} from "../data/const";
+import {COLORS} from "../data/const";
 
 const createColorListTemplate = (colors, currentColor) => {
   return Array.from(colors)
@@ -54,7 +54,7 @@ export const createTaskEditTemplate = (taskData) => {
   const isRepeatingTask = Object.values(repeatingDays).some(Boolean);
   const repeatClass = Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``;
   const deadlineClass = (dueDate instanceof Date && dueDate < Date.now()) ? `card--deadline` : ``;
-  const colorList = createColorListTemplate(Colors, color);
+  const colorList = createColorListTemplate(COLORS, color);
   const hashTagList = createTagListTemplate(tagList);
   const repeatingDaysList = createRepeatingDaysTemplate(repeatingDays);
 

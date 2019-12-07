@@ -1,46 +1,59 @@
-import {createSiteMenuTemplate} from "./components/menu";
-import {createFilterTemplate} from "./components/filter";
-import {createContentTemplate} from "./components/content";
-import {createFilterBoardTemplate} from "./components/filter-board";
-import {createTaskEditTemplate} from "./components/task-edit";
-import {createTaskTemplate} from "./components/task";
-import {createButtonLoadMoreTemplate} from "./components/button-more";
+import SiteMenuComponent from "./components/menu";
+import FilterComponent from "./components/filter";
+import ContentComponent from "./components/content";
+import FilterBoardComponent from "./components/filter-board";
+import TaskEditComponent from "./components/task-edit";
+import TaskComponent from "./components/task";
+import LoadMoreButtonComponent from "./components/button-more";
 
 import {generateTaskData} from "./mock-data/task.data";
 import {getFilterData} from "./mock-data/filter.data";
 
-const taskListSelector = `.board__tasks`;
+import {render, RenderPosition} from "./utils";
+
+const siteMainElement = document.querySelector(`.main`);
+const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
+const contentComponent = new ContentComponent();
+const taskListElement = contentComponent.getElement().querySelector(`.board__tasks`);
 const TASK_PER_PAGE = 8;
 let currentTaskSlot = 1;
-let taskData = generateTaskData((TASK_PER_PAGE * 3) + 1); // generate 3 slots of cards + 1 for first editable card
-const firstTaskData = taskData.shift();
+let taskData = generateTaskData(TASK_PER_PAGE * 3); // generate 3 slots of cards + 1 for first editable card
 const generateTaskTemplate = (data, count) => {
   new Array(count)
     .fill(``)
     .map((e, i) => {
-      return render(taskListSelector, createTaskTemplate(data[i]), `beforeend`);
+      const taskComponent = new TaskComponent(data[i]);
+      const taskEditComponent = new TaskEditComponent(data[i]);
+      const editButton = taskComponent.getElement().querySelector(`.card__btn--edit`);
+      const editForm = taskEditComponent.getElement().querySelector(`form`);
+
+      editButton.addEventListener(`click`, () => {
+        taskListElement.replaceChild(taskEditComponent.getElement(), taskComponent.getElement());
+      });
+
+      editForm.addEventListener(`submit`, () => {
+        taskListElement.replaceChild(taskComponent.getElement(), taskEditComponent.getElement());
+      });
+
+      return render(taskListElement, taskComponent.getElement(), RenderPosition.BEFOREEND);
     })
     .join(``);
 };
 
-function render(selector, template, placing) {
-  document.querySelector(selector).insertAdjacentHTML(placing, template);
-}
-
-render(`.main__control`, createSiteMenuTemplate(), `beforeend`);
+render(siteHeaderElement, new SiteMenuComponent().getElement(), RenderPosition.BEFOREEND);
 
 const filterData = getFilterData(taskData);
-render(`.main`, createFilterTemplate(filterData), `beforeend`);
-render(`.main`, createContentTemplate(), `beforeend`);
-render(`.board.container`, createFilterBoardTemplate(), `afterbegin`);
-render(taskListSelector, createTaskEditTemplate(firstTaskData), `beforeend`);
 
-generateTaskTemplate(taskData, (TASK_PER_PAGE - 1)); // exclude first editable task
+render(siteMainElement, new FilterComponent(filterData).getElement(), RenderPosition.BEFOREEND);
+render(siteMainElement, contentComponent.getElement(), RenderPosition.BEFOREEND);
+render(contentComponent.getElement(), new FilterBoardComponent().getElement(), RenderPosition.AFTERBEGIN);
 
-render(`.board`, createButtonLoadMoreTemplate(), `beforeend`);
+generateTaskTemplate(taskData, TASK_PER_PAGE);
+
+render(contentComponent.getElement(), new LoadMoreButtonComponent().getElement(), RenderPosition.BEFOREEND);
 
 document.addEventListener(`click`, (event) => {
-  if (event.target && event.target.classList.contains(`load-more`)){
+  if (event.target && event.target.classList.contains(`load-more`)) {
     const dataFrom = currentTaskSlot * TASK_PER_PAGE;
     const dataTo = dataFrom + TASK_PER_PAGE;
     const moreTaskData = taskData.slice(dataFrom, dataTo);

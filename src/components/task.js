@@ -1,3 +1,5 @@
+import {createElement} from "../utils";
+
 const createHashTagTemplate = (tagList) => {
   return Array.from(tagList)
     .map((tag) => {
@@ -12,7 +14,7 @@ const createHashTagTemplate = (tagList) => {
     .join(`\n`);
 };
 
-export const createTaskTemplate = (taskData) => {
+const createTaskTemplate = (taskData) => {
   const {description, dueDate, repeatingDays, tagList, color} = taskData;
 
   const isDateShowing = !!dueDate;
@@ -67,3 +69,27 @@ export const createTaskTemplate = (taskData) => {
             </div>
           </article>`;
 };
+
+export default class Task {
+  constructor(task) {
+    this._task = task;
+
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTaskTemplate(this._task);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

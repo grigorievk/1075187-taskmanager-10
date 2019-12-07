@@ -1,4 +1,5 @@
 import {COLORS} from "../data/const";
+import {createElement} from "../utils";
 
 const createColorListTemplate = (colors, currentColor) => {
   return Array.from(colors)
@@ -46,7 +47,7 @@ const createRepeatingDaysTemplate = (repeatingDays) => {
     .join(``);
 };
 
-export const createTaskEditTemplate = (taskData) => {
+const createTaskEditTemplate = (taskData) => {
   const {description, dueDate, repeatingDays, tagList, color} = taskData;
 
   const isDateShowing = !!dueDate;
@@ -134,3 +135,26 @@ export const createTaskEditTemplate = (taskData) => {
             </form>
           </article>`;
 };
+
+export default class TaskEdit {
+  constructor(taskData) {
+    this._taskData = taskData;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return createTaskEditTemplate(this._taskData);
+  }
+
+  getElement() {
+    if (!this._element) {
+      this._element = createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

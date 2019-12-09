@@ -10,7 +10,7 @@ import LoadMoreButtonComponent from "./components/button-more";
 import {generateTaskData} from "./mock-data/task.data";
 import {getFilterData} from "./mock-data/filter.data";
 
-import {render, RenderPosition} from "./utils";
+import {render, RenderPosition} from "./utils/render";
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);

@@ -1,5 +1,5 @@
+import AbstractComponent from './abstract-component.js';
 import {COLORS} from "../data/const";
-import {createElement} from "../utils";
 
 const createColorListTemplate = (colors, currentColor) => {
   return Array.from(colors)
@@ -136,25 +136,19 @@ const createTaskEditTemplate = (taskData) => {
           </article>`;
 };
 
-export default class TaskEdit {
+export default class TaskEdit extends AbstractComponent {
   constructor(taskData) {
+    super();
+
     this._taskData = taskData;
-    this._element = null;
   }
 
   getTemplate() {
     return createTaskEditTemplate(this._taskData);
   }
 
-  getElement() {
-    if (!this._element) {
-      this._element = createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setSubmitHandler(handler) {
+    this.getElement().querySelector(`form`)
+      .addEventListener(`submit`, handler);
   }
 }

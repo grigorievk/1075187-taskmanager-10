@@ -4,8 +4,9 @@ import TaskListEmptyComponent from "../components/task-list-empty";
 import SortComponent from "../components/sort";
 import LoadMoreButtonComponent from "../components/button-more";
 
-import {render, RenderPosition, replace} from "../utils/render";
+import {render, RenderPosition} from "../utils/render";
 import {TASK_PER_PAGE, SortType} from "../data/const";
+import TaskController from "./task";
 
 let currentTaskSlot = 1;
 
@@ -13,38 +14,12 @@ const generateTaskList = (taskListElement, data, count) => {
   new Array(count)
     .fill(``)
     .map((e, i) => {
-      generateTaskTemplate(taskListElement, data, i);
+      const taskController = new TaskController(taskListElement);
+      taskController.render(data[i]);
+
+      return taskController;
     })
     .join(``);
-};
-const generateTaskTemplate = (taskListElement, data, i) => {
-  const taskComponent = new TaskComponent(data[i]);
-  const taskEditComponent = new TaskEditComponent(data[i]);
-  const onEscKeyDown = (evt) => {
-    const isEscKey = evt.key === `Escape` || evt.key === `Esc`;
-
-    if (isEscKey) {
-      replaceEditToTask();
-      document.removeEventListener(`keydown`, onEscKeyDown);
-    }
-  };
-
-  const replaceEditToTask = () => {
-    replace(taskComponent, taskEditComponent);
-  };
-
-  const replaceTaskToEdit = () => {
-    replace(taskComponent, taskEditComponent);
-  };
-
-  taskComponent.setEditButtonClickHandler(() => {
-    replaceTaskToEdit();
-    document.addEventListener(`keydown`, onEscKeyDown);
-  });
-
-  taskEditComponent.setSubmitHandler(replaceEditToTask);
-
-  return render(taskListElement, taskComponent, RenderPosition.BEFOREEND);
 };
 
 export default class BoardController {

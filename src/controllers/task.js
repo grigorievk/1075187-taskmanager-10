@@ -4,8 +4,9 @@ import {render, RenderPosition, replace} from "../utils/render";
 
 
 export default class TaskController {
-  constructor(container) {
+  constructor(container, onDataChange) {
     this._container = container;
+    this._onDataChange = onDataChange;
 
     this._taskComponent = null;
     this._taskEditComponent = null;
@@ -15,7 +16,7 @@ export default class TaskController {
 
   render(taskData) {
     const oldTaskComponent = this._taskComponent;
-    const oldTaskEditComponent = new this._taskEditComponent;
+    const oldTaskEditComponent = this._taskEditComponent;
 
     this._taskComponent = new TaskComponent(taskData);
     this._taskEditComponent = new TaskEditComponent(taskData);

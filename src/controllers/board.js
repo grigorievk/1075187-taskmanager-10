@@ -1,5 +1,3 @@
-import TaskComponent from "../components/task";
-import TaskEditComponent from "../components/task-edit";
 import TaskListEmptyComponent from "../components/task-list-empty";
 import SortComponent from "../components/sort";
 import LoadMoreButtonComponent from "../components/button-more";
@@ -10,11 +8,11 @@ import TaskController from "./task";
 
 let currentTaskSlot = 1;
 
-const generateTaskList = (taskListElement, data, count) => {
+const generateTaskList = (taskListElement, data, count, onDataChange) => {
   new Array(count)
     .fill(``)
     .map((e, i) => {
-      const taskController = new TaskController(taskListElement);
+      const taskController = new TaskController(taskListElement, onDataChange);
       taskController.render(data[i]);
 
       return taskController;
@@ -26,15 +24,18 @@ export default class BoardController {
   constructor(container) {
     this._container = container;
 
+    this._taskData = [];
     this._taskListEmptyComponent = new TaskListEmptyComponent();
     this._sortComponent = new SortComponent();
     this._taskListElement = this._container.getElement().querySelector(`.board__tasks`);
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
+
+    this._onDataChange = this._onDataChange.bind(this);
   }
 
   render(taskData) {
     const container = this._container.getElement();
-    const isAllTasksArchived = taskData.every((task) => task.isArchive);
+    const isAllTasksArchived = this._taskData.every((task) => task.isArchive);
 
     if (isAllTasksArchived) {
       render(container, this._taskListEmptyComponent, RenderPosition.BEFOREEND);
@@ -84,5 +85,17 @@ export default class BoardController {
         }
       }
     });
+  }
+
+  _onDataChange(taskController, oldTaskData, newData) {
+    const index = this._taskData.findIndex((it) => it === oldTaskData);
+
+    if (index === -1) {
+      return;
+    }
+
+    this._taskData = [].concat(this._taskData.slice(0, index), newData, this._taskData.slice(index + 1));
+
+    taskController.render(this._taskData[index]);
   }
 }

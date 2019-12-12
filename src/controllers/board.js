@@ -8,16 +8,13 @@ import TaskController from "./task";
 
 let currentTaskSlot = 1;
 
-const generateTaskList = (taskListElement, data, count, onDataChange) => {
-  new Array(count)
-    .fill(``)
-    .map((e, i) => {
-      const taskController = new TaskController(taskListElement, onDataChange);
-      taskController.render(data[i]);
+const generateTaskList = (taskListElement, data, count, onDataChange, onViewChange) => {
+  return data.map((e, i) => {
+    const taskController = new TaskController(taskListElement, onDataChange, onViewChange);
+    taskController.render(data[i]);
 
-      return taskController;
-    })
-    .join(``);
+    return taskController;
+  });
 };
 
 export default class BoardController {
@@ -25,15 +22,19 @@ export default class BoardController {
     this._container = container;
 
     this._taskData = [];
+    this._showedTaskControllers = [];
+
     this._taskListEmptyComponent = new TaskListEmptyComponent();
     this._sortComponent = new SortComponent();
     this._taskListElement = this._container.getElement().querySelector(`.board__tasks`);
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
 
     this._onDataChange = this._onDataChange.bind(this);
+    this._onViewChange = this._onViewChange.bind(this);
   }
 
   render(taskData) {
+    this._taskData = taskData;
     const container = this._container.getElement();
     const isAllTasksArchived = this._taskData.every((task) => task.isArchive);
 
@@ -44,7 +45,8 @@ export default class BoardController {
 
     render(container, this._sortComponent, RenderPosition.AFTERBEGIN);
 
-    generateTaskList(this._taskListElement, taskData, TASK_PER_PAGE);
+    const generatedTaskList = generateTaskList(this._taskListElement, taskData, TASK_PER_PAGE, this._onDataChange, this._onViewChange);
+    this._showedTaskControllers = this._showedTaskControllers.concat(generatedTaskList);
 
     render(container, this._loadMoreButtonComponent, RenderPosition.BEFOREEND);
 
@@ -68,7 +70,7 @@ export default class BoardController {
       }
 
       this._taskListElement.innerHTML = ``;
-      generateTaskList(this._taskListElement, sortedTasks, TASK_PER_PAGE);
+      generateTaskList(this._taskListElement, sortedTasks, TASK_PER_PAGE, this._onDataChange, this._onViewChange);
     });
 
     document.addEventListener(`click`, (event) => {
@@ -77,7 +79,7 @@ export default class BoardController {
         const dataTo = dataFrom + TASK_PER_PAGE;
         const moreTaskData = taskData.slice(dataFrom, dataTo);
 
-        generateTaskList(this._taskListElement, moreTaskData, TASK_PER_PAGE);
+        generateTaskList(this._taskListElement, moreTaskData, TASK_PER_PAGE, this._onDataChange, this._onViewChange);
         currentTaskSlot++;
 
         if (dataTo === taskData.length) {
@@ -97,5 +99,9 @@ export default class BoardController {
     this._taskData = [].concat(this._taskData.slice(0, index), newData, this._taskData.slice(index + 1));
 
     taskController.render(this._taskData[index]);
+  }
+
+  _onViewChange() {
+    this._showedTaskControllers.forEach((it) => it.setDefaultView());
   }
 }

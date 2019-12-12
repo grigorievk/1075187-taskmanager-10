@@ -1,5 +1,4 @@
-import AbstractComponent from './abstract-component.js';
-import {COLORS} from "../data/const";
+import {COLORS, DAYS} from "../data/const";
 import AbstractSmartComponent from "./abstract-smart-component";
 
 const isRepeating = (repeatingDays) => {
@@ -38,18 +37,25 @@ const createTagListTemplate = (tagList) => {
     .join(``);
 };
 
-const createRepeatingDaysTemplate = (repeatingDays) => {
-  return Array.from(repeatingDays)
-    .map((day) => `
-      <input
-        class="visually-hidden card__repeat-day-input"
-        type="checkbox"
-        id="repeat-${day}-1"
-        name="repeat"
-        value="${day}"
-      />
-      <label class="card__repeat-day" for="repeat-${day}-1">${day}</label>`)
-    .join(``);
+const createRepeatingDaysTemplate = (days, repeatingDays) => {
+  return days
+    .map((day) => {
+      const isChecked = repeatingDays[day];
+      return (`
+        <input
+          class="visually-hidden card__repeat-day-input"
+          type="checkbox"
+          id="repeat-${day}-1"
+          name="repeat"
+          value="${day}"
+          ${isChecked ? `checked` : ``}
+        />
+        <label class="card__repeat-day" for="repeat-${day}-1"
+          >${day}</label
+        >`
+      );
+    })
+    .join(`\n`);
 };
 
 const createTaskEditTemplate = (taskData, options = {}) => {
@@ -64,7 +70,7 @@ const createTaskEditTemplate = (taskData, options = {}) => {
   const deadlineClass = (dueDate instanceof Date && dueDate < Date.now()) ? `card--deadline` : ``;
   const colorList = createColorListTemplate(COLORS, color);
   const hashTagList = createTagListTemplate(tagList);
-  const repeatingDaysList = createRepeatingDaysTemplate(repeatingDays);
+  const repeatingDaysList = createRepeatingDaysTemplate(DAYS, activeRepeatingDays);
 
   return `<article class="card card--edit card--${color} ${repeatClass} ${deadlineClass}">
             <form class="card__form" method="get">
@@ -100,13 +106,13 @@ const createTaskEditTemplate = (taskData, options = {}) => {
                       <button class="card__date-deadline-toggle" type="button">
                         date: <span class="card__date-status">${isDateShowing ? `yes` : `no`}</span>
                       </button>
-                      ${isDateShowing ? `
-                      <fieldset class="card__date-deadline" disabled>
+                       ${isDateShowing ? `
+                      <fieldset class="card__date-deadline">
                         <label class="card__input-deadline-wrap">
                           <input
                             class="card__date"
                             type="text"
-                            placeholder="${date}"
+                            placeholder=""
                             name="date"
                             value="${date}"
                           />
@@ -115,12 +121,12 @@ const createTaskEditTemplate = (taskData, options = {}) => {
                       <button class="card__repeat-toggle" type="button">
                         repeat:<span class="card__repeat-status">${isRepeatingTask ? `yes` : `no`}</span>
                       </button>
-                      ${isDateShowing ? `
-                      <fieldset class="card__repeat-days" disabled>
-                        <div class="card__repeat-days-inner">
-                        ${repeatingDaysList}
-                        </div>
-                      </fieldset>` : ``}
+                      ${isRepeatingTask ? `
+                        <fieldset class="card__repeat-days">
+                          <div class="card__repeat-days-inner">
+                            ${repeatingDaysList}
+                          </div>
+                    </fieldset>` : ``}
                     </div>
                     <div class="card__hashtag">
                       <div class="card__hashtag-list"></div>
@@ -164,6 +170,22 @@ export default class TaskEdit extends AbstractSmartComponent  {
 
   recoveryListeners() {
     this._subscribeOnEvents();
+  }
+
+  rerender() {
+    super.rerender();
+
+    // this._applyFlatpickr();
+  }
+
+  reset() {
+    const taskData = this._taskData;
+
+    this._isDateShowing = !!taskData.dueDate;
+    this._isRepeatingTask = Object.values(taskData.repeatingDays).some(Boolean);
+    this._activeRepeatingDays = Object.assign({}, taskData.repeatingDays);
+
+    this.rerender();
   }
 
   setSubmitHandler(handler) {

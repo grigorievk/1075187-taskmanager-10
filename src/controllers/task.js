@@ -28,6 +28,18 @@ export default class TaskController {
     this._taskComponent = new TaskComponent(taskData);
     this._taskEditComponent = new TaskEditComponent(taskData);
 
+    this._taskComponent.setArchiveButtonClickHandler(() => {
+      this._onDataChange(this, taskData, Object.assign({}, taskData, {
+        isArchive: !taskData.isArchive,
+      }));
+    });
+
+    this._taskComponent.setFavoritesButtonClickHandler(() => {
+      this._onDataChange(this, taskData, Object.assign({}, taskData, {
+        isFavorite: !taskData.isFavorite,
+      }));
+    });
+
     this._taskComponent.setEditButtonClickHandler(() => {
       this._replaceTaskToEdit();
       document.addEventListener(`keydown`, this._onEscKeyDown);

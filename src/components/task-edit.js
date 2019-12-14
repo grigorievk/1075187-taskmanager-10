@@ -149,7 +149,7 @@ const createTaskEditTemplate = (taskData, options = {}) => {
           </article>`;
 };
 
-export default class TaskEdit extends AbstractSmartComponent  {
+export default class TaskEdit extends AbstractSmartComponent {
   constructor(taskData) {
     super();
 

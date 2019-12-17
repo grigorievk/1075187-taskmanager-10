@@ -1,5 +1,7 @@
+import flatpickr from 'flatpickr';
 import {COLORS, DAYS} from "../data/const";
 import AbstractSmartComponent from "./abstract-smart-component";
+import {formatTime, formatDate} from '../utils/date-time.js';
 
 const isRepeating = (repeatingDays) => {
   return Object.values(repeatingDays).some(Boolean);
@@ -62,7 +64,8 @@ const createTaskEditTemplate = (taskData, options = {}) => {
   const {description, dueDate, repeatingDays, tagList, color} = taskData;
   const {isDateShowing, isRepeatingTask, activeRepeatingDays} = options;
 
-  const date = isDateShowing ? new Date(dueDate).toDateString() : ``;
+  const date = (isDateShowing && dueDate) ? formatDate(dueDate) : ``;
+  const time = (isDateShowing && dueDate) ? formatTime(dueDate) : ``;
   const isDisableSaveButton = (isDateShowing && isRepeatingTask) ||
     (isRepeatingTask && !isRepeating(activeRepeatingDays));
 
@@ -114,7 +117,7 @@ const createTaskEditTemplate = (taskData, options = {}) => {
                             type="text"
                             placeholder=""
                             name="date"
-                            value="${date}"
+                            value="${date} ${time}"
                           />
                         </label>
                       </fieldset>` : ``}
@@ -169,13 +172,14 @@ export default class TaskEdit extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
+    this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
   rerender() {
     super.rerender();
 
-    // this._applyFlatpickr();
+    this._applyFlatpickr();
   }
 
   reset() {
@@ -191,6 +195,22 @@ export default class TaskEdit extends AbstractSmartComponent {
   setSubmitHandler(handler) {
     this.getElement().querySelector(`form`)
       .addEventListener(`submit`, handler);
+  }
+
+  _applyFlatpickr() {
+    if (this._flatpickr) {
+      this._flatpickr.destroy();
+      this._flatpickr = null;
+    }
+
+    if (this._isDateShowing) {
+      const dateElement = this.getElement().querySelector(`.card__date`);
+      this._flatpickr = flatpickr(dateElement, {
+        altInput: true,
+        allowInput: true,
+        defaultDate: this._task.dueDate,
+      });
+    }
   }
 
   _subscribeOnEvents() {

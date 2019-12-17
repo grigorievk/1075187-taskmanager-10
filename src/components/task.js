@@ -1,4 +1,5 @@
 import AbstractComponent from './abstract-component.js';
+import {formatTime, formatDate} from '../utils/date-time.js';
 
 const createHashTagTemplate = (tagList) => {
   return Array.from(tagList)
@@ -20,7 +21,8 @@ const createTaskTemplate = (taskData) => {
   const isDateShowing = !!dueDate;
   const repeatClass = Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``;
   const deadlineClass = (dueDate instanceof Date && dueDate < Date.now()) ? `card--deadline` : ``;
-  const date = isDateShowing ? new Date(dueDate).toDateString() : ``;
+  const date = isDateShowing ? formatDate(dueDate) : ``;
+  const time = isDateShowing ? formatTime(dueDate) : ``;
   const hashtagList = createHashTagTemplate(tagList);
 
   return `<article class="card card--${color} ${repeatClass} ${deadlineClass}">
@@ -54,7 +56,7 @@ const createTaskTemplate = (taskData) => {
                       <div class="card__date-deadline">
                         <p class="card__input-deadline-wrap">
                           <span class="card__date">${date}</span>
-<!--                          <span class="card__time">11:15 PM</span>-->
+                          <span class="card__time">${time}</span>
                         </p>
                       </div>
                     </div>

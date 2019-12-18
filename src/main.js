@@ -1,5 +1,5 @@
 import BoardController from "./controllers/board";
-import TaskListModel from './models/tasks.js';
+import TaskListModel from './models/task-list.js';
 
 import SiteMenuComponent from "./components/menu";
 import FilterComponent from "./components/filter";

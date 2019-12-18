@@ -1,5 +1,5 @@
-import {isRepeating, isOneDay, isOverdueDate} from './common.js';
-import {FilterType} from '../const.js';
+import {isOneDay, isOverdueDate, isRepeating} from "./date-time";
+import {FilterType} from '../data/const';
 
 export const getArchiveTasks = (taskListData) => {
   return taskListData.filter((taskData) => taskData.isArchive);

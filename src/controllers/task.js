@@ -45,7 +45,10 @@ export default class TaskController {
       document.addEventListener(`keydown`, this._onEscKeyDown);
     });
 
-    this._taskEditComponent.setSubmitHandler(() => this._replaceEditToTask());
+    this._taskEditComponent.setSubmitHandler((event) => {
+      event.preventDefault();
+      this._replaceEditToTask();
+    });
 
     if (oldTaskEditComponent && oldTaskComponent) {
       replace(this._taskComponent, oldTaskComponent);

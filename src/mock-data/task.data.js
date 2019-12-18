@@ -27,7 +27,7 @@ const TagList = new Set([
 const getRndArrayItem = (array) => array[getRndIntNumber(array.length)];
 
 const getRndIntNumber = (max, min = 0) => {
-  return min + Math.floor(max * Math.random());
+  return min + Math.floor((max - min + 1) * Math.random());
 };
 
 const getRndDate = () => Date.now() + getRndIntNumber(7, 1) * 24 * 60 * 60 * 1000;

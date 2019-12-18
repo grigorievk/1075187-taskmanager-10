@@ -160,6 +160,8 @@ export default class TaskEdit extends AbstractSmartComponent {
     this._isDateShowing = !!taskData.dueDate;
     this._isRepeatingTask = Object.values(taskData.repeatingDays).some(Boolean);
     this._activeRepeatingDays = Object.assign({}, taskData.repeatingDays);
+    this._submitHandler = null;
+    this._applyFlatpickr();
     this._subscribeOnEvents();
   }
 
@@ -172,7 +174,7 @@ export default class TaskEdit extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this._applyFlatpickr();
+    this.setSubmitHandler(this._submitHandler);
     this._subscribeOnEvents();
   }
 
@@ -195,6 +197,8 @@ export default class TaskEdit extends AbstractSmartComponent {
   setSubmitHandler(handler) {
     this.getElement().querySelector(`form`)
       .addEventListener(`submit`, handler);
+
+    this._submitHandler = handler;
   }
 
   _applyFlatpickr() {

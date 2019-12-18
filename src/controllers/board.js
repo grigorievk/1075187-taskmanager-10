@@ -18,10 +18,10 @@ const generateTaskList = (taskListElement, data, count, onDataChange, onViewChan
 };
 
 export default class BoardController {
-  constructor(container) {
+  constructor(container, tasksModel) {
     this._container = container;
+    this._tasksModel = tasksModel;
 
-    this._taskData = [];
     this._showedTaskControllers = [];
 
     this._taskListEmptyComponent = new TaskListEmptyComponent();
@@ -33,10 +33,10 @@ export default class BoardController {
     this._onViewChange = this._onViewChange.bind(this);
   }
 
-  render(taskData) {
-    this._taskData = taskData;
+  render() {
     const container = this._container.getElement();
-    const isAllTasksArchived = this._taskData.every((task) => task.isArchive);
+    const taskListData = this._tasksModel.getTasks();
+    const isAllTasksArchived = taskListData.every((task) => task.isArchive);
 
     if (isAllTasksArchived) {
       render(container, this._taskListEmptyComponent, RenderPosition.BEFOREEND);
@@ -45,7 +45,7 @@ export default class BoardController {
 
     render(container, this._sortComponent, RenderPosition.AFTERBEGIN);
 
-    const generatedTaskList = generateTaskList(this._taskListElement, taskData, TASK_PER_PAGE, this._onDataChange, this._onViewChange);
+    const generatedTaskList = generateTaskList(this._taskListElement, taskListData, TASK_PER_PAGE, this._onDataChange, this._onViewChange);
     this._showedTaskControllers = this._showedTaskControllers.concat(generatedTaskList);
 
     render(container, this._loadMoreButtonComponent, RenderPosition.BEFOREEND);
@@ -55,13 +55,13 @@ export default class BoardController {
 
       switch (sortType) {
         case SortType.DATE_UP:
-          sortedTasks = taskData.slice().sort((a, b) => a.dueDate - b.dueDate);
+          sortedTasks = taskListData.slice().sort((a, b) => a.dueDate - b.dueDate);
           break;
         case SortType.DATE_DOWN:
-          sortedTasks = taskData.slice().sort((a, b) => b.dueDate - a.dueDate);
+          sortedTasks = taskListData.slice().sort((a, b) => b.dueDate - a.dueDate);
           break;
         case SortType.DEFAULT:
-          sortedTasks = taskData.slice();
+          sortedTasks = taskListData.slice();
           break;
       }
 
@@ -77,28 +77,25 @@ export default class BoardController {
       if (event.target && event.target.classList.contains(`load-more`)) {
         const dataFrom = currentTaskSlot * TASK_PER_PAGE;
         const dataTo = dataFrom + TASK_PER_PAGE;
-        const moreTaskData = taskData.slice(dataFrom, dataTo);
+        const moreTaskData = taskListData.slice(dataFrom, dataTo);
 
         generateTaskList(this._taskListElement, moreTaskData, TASK_PER_PAGE, this._onDataChange, this._onViewChange);
         currentTaskSlot++;
 
-        if (dataTo === taskData.length) {
+        if (dataTo === taskListData.length) {
           event.target.classList.add(`visually-hidden`);
         }
       }
     });
   }
 
-  _onDataChange(taskController, oldTaskData, newData) {
-    const index = this._taskData.findIndex((it) => it === oldTaskData);
+  _onDataChange(taskController, oldTaskData, newTaskData) {
+    const isSuccess = this._tasksModel.updateTask(oldTaskData.id, newTaskData);
 
-    if (index === -1) {
-      return;
+    if (isSuccess) {
+      taskController.render(newTaskData);
     }
 
-    this._taskData = [].concat(this._taskData.slice(0, index), newData, this._taskData.slice(index + 1));
-
-    taskController.render(this._taskData[index]);
   }
 
   _onViewChange() {

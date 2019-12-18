@@ -1,5 +1,5 @@
 import AbstractComponent from './abstract-component.js';
-import {formatTime, formatDate} from '../utils/date-time.js';
+import {formatTime, formatDate, isOverdueDate} from '../utils/date-time.js';
 
 const createHashTagTemplate = (tagList) => {
   return Array.from(tagList)
@@ -20,7 +20,7 @@ const createTaskTemplate = (taskData) => {
 
   const isDateShowing = !!dueDate;
   const repeatClass = Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``;
-  const deadlineClass = (dueDate instanceof Date && dueDate < Date.now()) ? `card--deadline` : ``;
+  const deadlineClass = (dueDate instanceof Date && isOverdueDate(dueDate, new Date())) ? `card--deadline` : ``;
   const date = isDateShowing ? formatDate(dueDate) : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
   const hashtagList = createHashTagTemplate(tagList);

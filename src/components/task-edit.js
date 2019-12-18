@@ -1,7 +1,7 @@
 import flatpickr from 'flatpickr';
 import {COLORS, DAYS} from "../data/const";
 import AbstractSmartComponent from "./abstract-smart-component";
-import {formatTime, formatDate, isRepeating} from '../utils/date-time.js';
+import {formatTime, formatDate, isRepeating, isOverdueDate} from '../utils/date-time.js';
 
 const createColorListTemplate = (colors, currentColor) => {
   return Array.from(colors)
@@ -66,7 +66,7 @@ const createTaskEditTemplate = (taskData, options = {}) => {
     (isRepeatingTask && !isRepeating(activeRepeatingDays));
 
   const repeatClass = Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``;
-  const deadlineClass = (dueDate instanceof Date && dueDate < Date.now()) ? `card--deadline` : ``;
+  const deadlineClass = (dueDate instanceof Date && isOverdueDate(dueDate, new Date())) ? `card--deadline` : ``;
   const colorList = createColorListTemplate(COLORS, color);
   const hashTagList = createTagListTemplate(tagList);
   const repeatingDaysList = createRepeatingDaysTemplate(DAYS, activeRepeatingDays);

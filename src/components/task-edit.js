@@ -1,11 +1,7 @@
 import flatpickr from 'flatpickr';
 import {COLORS, DAYS} from "../data/const";
 import AbstractSmartComponent from "./abstract-smart-component";
-import {formatTime, formatDate} from '../utils/date-time.js';
-
-const isRepeating = (repeatingDays) => {
-  return Object.values(repeatingDays).some(Boolean);
-};
+import {formatTime, formatDate, isRepeating} from '../utils/date-time.js';
 
 const createColorListTemplate = (colors, currentColor) => {
   return Array.from(colors)

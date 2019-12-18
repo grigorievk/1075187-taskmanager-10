@@ -1,5 +1,5 @@
 import BoardController from "./controllers/board";
-import TasksModel from './models/tasks.js';
+import TaskListModel from './models/tasks.js';
 
 import SiteMenuComponent from "./components/menu";
 import FilterComponent from "./components/filter";
@@ -17,17 +17,17 @@ const contentComponent = new ContentComponent();
 
 import "../node_modules/flatpickr/dist/flatpickr.min.css";
 
-let taskData = generateTaskData(TASK_PER_PAGE * 3); // generate 3 slots of cards
-const tasksModel = new TasksModel();
-tasksModel.setTasks(taskData);
+let taskListData = generateTaskData(TASK_PER_PAGE * 3); // generate 3 slots of cards
+const taskListModel = new TaskListModel();
+taskListModel.setTasks(taskListData);
 
 render(siteHeaderElement, new SiteMenuComponent(), RenderPosition.BEFOREEND);
 
-const filterData = getFilterData(taskData);
+const filterData = getFilterData(taskListData);
 
 render(siteMainElement, new FilterComponent(filterData), RenderPosition.BEFOREEND);
 render(siteMainElement, contentComponent, RenderPosition.BEFOREEND);
 
-const boardController = new BoardController(contentComponent, tasksModel);
+const boardController = new BoardController(contentComponent, taskListModel);
 
 boardController.render();

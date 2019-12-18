@@ -18,9 +18,9 @@ const generateTaskList = (taskListElement, data, count, onDataChange, onViewChan
 };
 
 export default class BoardController {
-  constructor(container, tasksModel) {
+  constructor(container, taskListModel) {
     this._container = container;
-    this._tasksModel = tasksModel;
+    this._taskListModel = taskListModel;
 
     this._showedTaskControllers = [];
 
@@ -28,14 +28,16 @@ export default class BoardController {
     this._sortComponent = new SortComponent();
     this._taskListElement = this._container.getElement().querySelector(`.board__tasks`);
     this._loadMoreButtonComponent = new LoadMoreButtonComponent();
+    this._taskListModel.setFilterChangeHandler(this._onFilterChange);
 
     this._onDataChange = this._onDataChange.bind(this);
     this._onViewChange = this._onViewChange.bind(this);
+    this._onFilterChange = this._onFilterChange.bind(this);
   }
 
   render() {
     const container = this._container.getElement();
-    const taskListData = this._tasksModel.getTasks();
+    const taskListData = this._taskListModel.getTasks();
     const isAllTasksArchived = taskListData.every((task) => task.isArchive);
 
     if (isAllTasksArchived) {
@@ -90,7 +92,7 @@ export default class BoardController {
   }
 
   _onDataChange(taskController, oldTaskData, newTaskData) {
-    const isSuccess = this._tasksModel.updateTask(oldTaskData.id, newTaskData);
+    const isSuccess = this._taskListModel.updateTask(oldTaskData.id, newTaskData);
 
     if (isSuccess) {
       taskController.render(newTaskData);
@@ -100,5 +102,8 @@ export default class BoardController {
 
   _onViewChange() {
     this._showedTaskControllers.forEach((it) => it.setDefaultView());
+  }
+
+  _onFilterChange() {
   }
 }

@@ -1,5 +1,3 @@
-export const TASK_PER_PAGE = 8;
-
 export const COLORS = [`black`, `yellow`, `blue`, `green`, `pink`];
 
 export const DAYS = [`mo`, `tu`, `we`, `th`, `fr`, `sa`, `su`];
@@ -19,3 +17,6 @@ export const FilterType = {
   TAGS: `tags`,
   TODAY: `today`,
 };
+
+export const SHOWING_TASKS_COUNT_ON_START = 8;
+export const SHOWING_TASKS_COUNT_BY_BUTTON = 8;

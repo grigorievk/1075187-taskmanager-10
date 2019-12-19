@@ -9,7 +9,6 @@ import {generateTaskData} from "./mock-data/task.data";
 import {getFilterData} from "./mock-data/filter.data";
 
 import {render, RenderPosition} from "./utils/render";
-import {TASK_PER_PAGE} from "./data/const";
 
 const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
@@ -17,7 +16,7 @@ const contentComponent = new ContentComponent();
 
 import "../node_modules/flatpickr/dist/flatpickr.min.css";
 
-let taskListData = generateTaskData(TASK_PER_PAGE * 3); // generate 3 slots of cards
+const taskListData = generateTaskData(22);
 const taskListModel = new TaskListModel();
 taskListModel.setTasks(taskListData);
 

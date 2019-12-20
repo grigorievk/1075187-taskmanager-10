@@ -9,7 +9,10 @@ export default class FilterController {
     this._taskListModel = taskListModel;
     this._filterComponent = null;
 
+    this._onDataChange = this._onDataChange.bind(this);
     this._onFilterChange = this._onFilterChange.bind(this);
+
+    this._taskListModel.setDataChangeHandler(this._onDataChange);
   }
 
   render() {
@@ -32,6 +35,10 @@ export default class FilterController {
     } else {
       render(container, this._filterComponent, RenderPosition.BEFOREEND);
     }
+  }
+
+  _onDataChange() {
+    this.render();
   }
 
   _onFilterChange(filterType) {

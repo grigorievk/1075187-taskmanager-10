@@ -7,7 +7,7 @@ import {remove, render, RenderPosition} from "../utils/render";
 import {SHOWING_TASKS_COUNT_BY_BUTTON, SHOWING_TASKS_COUNT_ON_START, SortType} from "../data/const";
 import TaskController from "./task";
 
-const generateTaskList = (taskListElement, taskListData, count, onDataChange, onViewChange) => {
+const generateTaskList = (taskListElement, taskListData, onDataChange, onViewChange) => {
   return taskListData.map((taskData) => {
     const taskController = new TaskController(taskListElement, onDataChange, onViewChange);
     taskController.render(taskData);

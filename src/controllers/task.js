@@ -44,7 +44,8 @@ export default class TaskController {
 
     this._taskEditComponent.setSubmitHandler((event) => {
       event.preventDefault();
-      this._onDataChange(this, taskData, []); // change to data
+      const data = this._taskEditComponent.getData();
+      this._onDataChange(this, taskData, data);
     });
 
     this._taskEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, taskData, null));

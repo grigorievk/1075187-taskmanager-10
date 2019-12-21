@@ -1,7 +1,12 @@
+import he from "he";
 import AbstractComponent from './abstract-component.js';
 import {formatTime, formatDate, isOverdueDate} from '../utils/date-time.js';
 
 const createHashTagTemplate = (tagList) => {
+  if (!tagList) {
+    return undefined;
+  }
+
   return Array.from(tagList)
     .map((tag) => {
       return (
@@ -16,13 +21,14 @@ const createHashTagTemplate = (tagList) => {
 };
 
 const createTaskTemplate = (taskData) => {
-  const {description, dueDate, repeatingDays, tagList, color} = taskData;
+  const {description: notSanitizedDescription, dueDate, repeatingDays, tagList, color} = taskData;
 
   const isDateShowing = !!dueDate;
   const repeatClass = Object.keys(repeatingDays).some((day) => repeatingDays[day]) ? `card--repeat` : ``;
   const deadlineClass = (dueDate instanceof Date && isOverdueDate(dueDate, new Date())) ? `card--deadline` : ``;
   const date = isDateShowing ? formatDate(dueDate) : ``;
   const time = isDateShowing ? formatTime(dueDate) : ``;
+  const description = he.encode(notSanitizedDescription);
   const hashtagList = createHashTagTemplate(tagList);
 
   return `<article class="card card--${color} ${repeatClass} ${deadlineClass}">
@@ -62,7 +68,7 @@ const createTaskTemplate = (taskData) => {
                     </div>
                     <div class="card__hashtag">
                       <div class="card__hashtag-list">
-                         ${hashtagList}
+                         ${hashtagList ? hashtagList : ``}
                       </div>
                     </div>
                   </div>
@@ -73,14 +79,14 @@ const createTaskTemplate = (taskData) => {
 };
 
 export default class Task extends AbstractComponent {
-  constructor(task) {
+  constructor(taskData) {
     super();
 
-    this._task = task;
+    this._taskData = taskData;
   }
 
   getTemplate() {
-    return createTaskTemplate(this._task);
+    return createTaskTemplate(this._taskData);
   }
 
   setEditButtonClickHandler(handler) {

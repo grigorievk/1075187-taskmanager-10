@@ -10,11 +10,17 @@ import {getFilterData} from "./mock-data/filter.data";
 
 import {render, RenderPosition} from "./utils/render";
 
+import "../node_modules/flatpickr/dist/flatpickr.min.css";
+
 const siteMainElement = document.querySelector(`.main`);
+const siteMenuComponent = new SiteMenuComponent();
+siteMenuComponent.getElement().querySelector(`.control__label--new-task`)
+  .addEventListener(`click`, () => {
+    boardController.createTask();
+  });
+
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
 const contentComponent = new ContentComponent();
-
-import "../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const taskListData = generateTaskData(22);
 const taskListModel = new TaskListModel();
@@ -23,7 +29,6 @@ taskListModel.setTasks(taskListData);
 render(siteHeaderElement, new SiteMenuComponent(), RenderPosition.BEFOREEND);
 
 const filterData = getFilterData(taskListData);
-
 render(siteMainElement, new FilterComponent(filterData), RenderPosition.BEFOREEND);
 render(siteMainElement, contentComponent, RenderPosition.BEFOREEND);
 

@@ -1,9 +1,7 @@
 import AbstractComponent from "./abstract-component";
 
 const createContentTemplate = () => {
-  return `<section class="board container">
-            <div class="board__tasks"></div>
-          </section>`;
+  return `<section class="board container"></section>`;
 };
 
 export default class Content extends AbstractComponent {

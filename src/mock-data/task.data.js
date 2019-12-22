@@ -1,4 +1,4 @@
-import {COLORS} from "../data/const";
+import {COLOR_LIST} from "../data/const";
 
 const DescriptionList = [
   `Изучить теорию`,
@@ -27,10 +27,18 @@ const TagList = new Set([
 const getRndArrayItem = (array) => array[getRndIntNumber(array.length)];
 
 const getRndIntNumber = (max, min = 0) => {
-  return min + Math.floor(max * Math.random());
+  return min + Math.floor((max - min) * Math.random());
 };
 
-const getRndDate = () => Date.now() + getRndIntNumber(7, 1) * 24 * 60 * 60 * 1000;
+const getRndDate = () => {
+  const targetDate = new Date();
+  const sign = Math.random() > 0.5 ? 1 : -1;
+  const diffValue = sign * getRndIntNumber(0, 7);
+
+  targetDate.setDate(targetDate.getDate() + diffValue);
+
+  return targetDate;
+};
 
 const getRndBoolean = () => Boolean(Math.round(Math.random()));
 
@@ -41,9 +49,10 @@ const generateRepeatingDays = () => {
 };
 
 export const getTaskData = () => {
-  const dueDate = getRndBoolean() ? null : getRndDate();
+  const dueDate = Math.random() > 0.5 ? null : getRndDate();
 
   return {
+    id: String(Date.now() + Math.random()),
     description: getRndArrayItem(DescriptionList),
     dueDate: getRndDate(),
     repeatingDays: dueDate ? DefaultRepeatingDays : generateRepeatingDays,
@@ -51,7 +60,7 @@ export const getTaskData = () => {
     get tagList() {
       return Array.from(TagList).filter((t, i) => i === getRndIntNumber(3));
     },
-    color: getRndArrayItem(COLORS),
+    color: getRndArrayItem(COLOR_LIST),
     isFavorite: getRndBoolean(),
     isArchive: getRndBoolean()
   };

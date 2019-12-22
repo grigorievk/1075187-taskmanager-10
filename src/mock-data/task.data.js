@@ -52,7 +52,7 @@ export const getTaskData = () => {
   const dueDate = Math.random() > 0.5 ? null : getRndDate();
 
   return {
-    id: String(new Date() + Math.random()),
+    id: String(Date.now() + Math.random()),
     description: getRndArrayItem(DescriptionList),
     dueDate: getRndDate(),
     repeatingDays: dueDate ? DefaultRepeatingDays : generateRepeatingDays,

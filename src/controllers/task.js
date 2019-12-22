@@ -53,8 +53,8 @@ export default class TaskController {
     switch (mode) {
       case Mode.DEFAULT:
         if (oldTaskEditComponent && oldTaskComponent) {
-          replace(this._taskComponent, oldTaskComponent);
-          replace(this._taskEditComponent, oldTaskEditComponent);
+          replace(oldTaskComponent, this._taskComponent);
+          replace(oldTaskEditComponent, this._taskEditComponent);
           this._replaceEditToTask();
         } else {
           render(this._container, this._taskComponent, RenderPosition.BEFOREEND);
@@ -68,13 +68,6 @@ export default class TaskController {
         document.addEventListener(`keydown`, this._onEscKeyDown);
         render(this._container, this._taskEditComponent, RenderPosition.AFTERBEGIN);
         break;
-    }
-
-    if (oldTaskEditComponent && oldTaskComponent) {
-      replace(this._taskComponent, oldTaskComponent);
-      replace(this._taskEditComponent, oldTaskEditComponent);
-    } else {
-      render(this._container, this._taskComponent, RenderPosition.BEFOREEND);
     }
   }
 
@@ -93,7 +86,10 @@ export default class TaskController {
   _replaceEditToTask() {
     this._taskEditComponent.reset();
 
-    replace(this._taskEditComponent, this._taskComponent);
+    if (document.contains(this._taskEditComponent.getElement())) {
+      replace(this._taskEditComponent, this._taskComponent);
+    }
+
     this._mode = Mode.DEFAULT;
   }
 

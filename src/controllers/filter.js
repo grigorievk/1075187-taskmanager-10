@@ -32,7 +32,7 @@ export default class FilterController {
     this._filterComponent.setFilterChangeHandler(this._onFilterChange);
 
     if (oldComponent) {
-      replace(this._filterComponent, oldComponent);
+      replace(oldComponent, this._filterComponent);
     } else {
       render(container, this._filterComponent, RenderPosition.BEFOREEND);
     }

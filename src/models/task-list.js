@@ -19,6 +19,7 @@ export default class TaskList {
 
   setTasks(taskListData) {
     this._taskListData = Array.from(taskListData);
+    this._callHandlers(this._dataChangeHandlers);
   }
 
   updateTask(id, taskData) {
@@ -29,7 +30,6 @@ export default class TaskList {
     }
 
     this._taskListData = [].concat(this._taskListData.slice(0, index), taskData, this._taskListData.slice(index + 1));
-
     this._callHandlers(this._dataChangeHandlers);
 
     return true;

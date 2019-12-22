@@ -60,7 +60,6 @@ export default class TaskList {
   }
 
   setFilterChangeHandler(handler) {
-    console.log(`setFilterChangeHandler`);
     this._filterChangeHandlers.push(handler);
   }
 

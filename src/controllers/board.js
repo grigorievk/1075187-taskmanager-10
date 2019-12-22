@@ -163,7 +163,6 @@ export default class BoardController {
   }
 
   _onFilterChange() {
-    console.log(`_onFilterChange`);
     this._updateTaskList(SHOWING_TASKS_COUNT_ON_START);
   }
 

@@ -30,7 +30,15 @@ const getRndIntNumber = (max, min = 0) => {
   return min + Math.floor((max - min) * Math.random());
 };
 
-const getRndDate = () => Date.now() + getRndIntNumber(7, 1) * 24 * 60 * 60 * 1000;
+const getRndDate = () => {
+  const targetDate = new Date();
+  const sign = Math.random() > 0.5 ? 1 : -1;
+  const diffValue = sign * getRndIntNumber(0, 7);
+
+  targetDate.setDate(targetDate.getDate() + diffValue);
+
+  return targetDate;
+};
 
 const getRndBoolean = () => Boolean(Math.round(Math.random()));
 
@@ -41,7 +49,7 @@ const generateRepeatingDays = () => {
 };
 
 export const getTaskData = () => {
-  const dueDate = getRndBoolean() ? null : getRndDate();
+  const dueDate = Math.random() > 0.5 ? null : getRndDate();
 
   return {
     id: String(new Date() + Math.random()),

@@ -7,6 +7,7 @@ export default class FilterController {
   constructor(container, taskListModel) {
     this._container = container;
     this._taskListModel = taskListModel;
+    this._activeFilterType = FilterType.ALL;
     this._filterComponent = null;
 
     this._onDataChange = this._onDataChange.bind(this);
@@ -16,6 +17,7 @@ export default class FilterController {
   }
 
   render() {
+    console.log(`filter render`);
     const container = this._container;
     const allTasks = this._taskListModel.getTasksAll();
     const filters = Object.values(FilterType).map((filterType) => {

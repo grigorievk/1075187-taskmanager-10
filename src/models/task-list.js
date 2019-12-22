@@ -40,10 +40,6 @@ export default class TaskList {
     this._callHandlers(this._filterChangeHandlers);
   }
 
-  setDataChangeHandler(handler) {
-    this._dataChangeHandlers.push(handler);
-  }
-
   addTask(taskData) {
     this._taskListData = [].concat(taskData, this._taskListData);
     this._callHandlers(this._dataChangeHandlers);
@@ -66,6 +62,10 @@ export default class TaskList {
   setFilterChangeHandler(handler) {
     console.log(`setFilterChangeHandler`);
     this._filterChangeHandlers.push(handler);
+  }
+
+  setDataChangeHandler(handler) {
+    this._dataChangeHandlers.push(handler);
   }
 
   _callHandlers(handlers) {

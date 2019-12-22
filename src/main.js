@@ -1,15 +1,14 @@
 import BoardController from "./controllers/board";
+import FilterController from "./controllers/filter";
+
 import TaskListModel from './models/task-list.js';
 
 import SiteMenuComponent from "./components/menu";
-import FilterComponent from "./components/filter";
 import ContentComponent from "./components/content";
 
 import {generateTaskData} from "./mock-data/task.data";
-import {getFilterData} from "./mock-data/filter.data";
 
 import {render, RenderPosition} from "./utils/render";
-
 import "../node_modules/flatpickr/dist/flatpickr.min.css";
 
 const siteMainElement = document.querySelector(`.main`);
@@ -28,8 +27,9 @@ taskListModel.setTasks(taskListData);
 
 render(siteHeaderElement, new SiteMenuComponent(), RenderPosition.BEFOREEND);
 
-const filterData = getFilterData(taskListData);
-render(siteMainElement, new FilterComponent(filterData), RenderPosition.BEFOREEND);
+const filterController = new FilterController(siteMainElement, taskListModel);
+filterController.render();
+
 render(siteMainElement, contentComponent, RenderPosition.BEFOREEND);
 
 const boardController = new BoardController(contentComponent, taskListModel);

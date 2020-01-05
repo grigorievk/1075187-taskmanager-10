@@ -1,7 +1,27 @@
+import TaskModel from '../models/task.js';
 import TaskComponent from "../components/task";
 import TaskEditComponent from "../components/task-edit";
 import {render, remove, RenderPosition, replace} from "../utils/render";
-import {Mode, EmptyTask} from "../data/const";
+import {Mode, EmptyTask, DAYS} from "../data/const";
+
+const parseFormData = (formData) => {
+  const repeatingDays = DAYS.reduce((acc, day) => {
+    acc[day] = false;
+    return acc;
+  }, {});
+  const date = formData.get(`date`);
+
+  return {
+    description: formData.get(`text`),
+    color: formData.get(`color`),
+    tags: formData.getAll(`hashtag`),
+    dueDate: date ? new Date(date) : null,
+    repeatingDays: formData.getAll(`repeat`).reduce((acc, it) => {
+      acc[it] = true;
+      return acc;
+    }, repeatingDays),
+  };
+};
 
 export default class TaskController {
   constructor(container, onDataChange, onViewChange) {
@@ -26,15 +46,17 @@ export default class TaskController {
     this._taskEditComponent = new TaskEditComponent(taskData);
 
     this._taskComponent.setArchiveButtonClickHandler(() => {
-      this._onDataChange(this, taskData, Object.assign({}, taskData, {
-        isArchive: !taskData.isArchive,
-      }));
+      const newTask = TaskModel.clone(taskData);
+      newTask.isArchive = !newTask.isArchive;
+
+      this._onDataChange(this, taskData, newTask);
     });
 
     this._taskComponent.setFavoritesButtonClickHandler(() => {
-      this._onDataChange(this, taskData, Object.assign({}, taskData, {
-        isFavorite: !taskData.isFavorite,
-      }));
+      const newTask = TaskModel.clone(taskData);
+      newTask.isFavorite = !newTask.isFavorite;
+
+      this._onDataChange(this, taskData, newTask);
     });
 
     this._taskComponent.setEditButtonClickHandler(() => {
@@ -44,7 +66,9 @@ export default class TaskController {
 
     this._taskEditComponent.setSubmitHandler((event) => {
       event.preventDefault();
-      const data = this._taskEditComponent.getData();
+      const formData = this._taskEditComponent.getData();
+      const data = parseFormData(formData);
+
       this._onDataChange(this, taskData, data);
     });
 

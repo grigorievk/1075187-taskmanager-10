@@ -23,10 +23,11 @@ const generateTaskList = (taskListElement, taskListData, onDataChange, onViewCha
 };
 
 export default class BoardController {
-  constructor(container, taskListModel) {
+  constructor(container, taskListModel, api) {
     this._container = container;
     this._taskListModel = taskListModel;
     this._showedTaskControllers = [];
+    this._api = api;
     this._showingTasksCount = SHOWING_TASKS_COUNT_ON_START;
 
     this._taskListEmptyComponent = new TaskListEmptyComponent();
@@ -157,11 +158,15 @@ export default class BoardController {
       this._taskListModel.removeTask(oldTaskData.id);
       this._updateTaskList(this._showingTasksCount);
     } else {
-      const isSuccess = this._taskListModel.updateTask(oldTaskData.id, newTaskData);
+      this._api.updateTask(oldTaskData.id, newTaskData)
+        .then((taskModel) => {
+          const isSuccess = this._taskListModel.updateTask(oldTaskData.id, taskModel);
 
-      if (isSuccess) {
-        taskController.render(newTaskData, TaskControllerMode.DEFAULT);
-      }
+          if (isSuccess) {
+            taskController.render(taskModel, TaskControllerMode.DEFAULT);
+            this._updateTaskList(this._showingTasksCount);
+          }
+        });
     }
 
   }

@@ -16,11 +16,18 @@ const siteMainElement = document.querySelector(`.main`);
 const siteHeaderElement = siteMainElement.querySelector(`.main__control`);
 
 const contentComponent = new ContentComponent();
-const statisticsComponent = new StatisticsComponent();
 
 const taskListData = generateTaskData(22);
 const taskListModel = new TaskListModel();
 taskListModel.setTasks(taskListData);
+
+const dateTo = new Date();
+const dateFrom = (() => {
+  const d = new Date(dateTo);
+  d.setDate(d.getDate() - 7);
+  return d;
+})();
+const statisticsComponent = new StatisticsComponent({taskData: taskListModel, dateFrom, dateTo});
 
 const siteMenuComponent = new SiteMenuComponent();
 render(siteHeaderElement, siteMenuComponent, RenderPosition.BEFOREEND);

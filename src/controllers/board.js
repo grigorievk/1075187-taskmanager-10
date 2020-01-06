@@ -78,6 +78,11 @@ export default class BoardController {
     }
 
     const taskListElement = this._taskListElement.getElement();
+    const container = this._container.getElement();
+    if (!document.querySelector(`.board__tasks`)) {
+      render(container, this._taskListElement, RenderPosition.BEFOREEND);
+    }
+
     this._creatingTask = new TaskController(taskListElement, this._onDataChange, this._onViewChange);
     this._creatingTask.render(EmptyTask, TaskControllerMode.ADDING);
   }

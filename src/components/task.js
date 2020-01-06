@@ -2,6 +2,23 @@ import he from "he";
 import AbstractComponent from './abstract-component.js';
 import {formatTime, formatDate, isOverdueDate} from '../utils/date-time.js';
 
+function debounce(f, ms) {
+  let isCooldown = false;
+
+  return function() {
+    if (isCooldown) {
+      return;
+    }
+
+    f.apply(this, arguments);
+    isCooldown = true;
+    setTimeout(() => isCooldown = false, ms);
+  };
+
+}
+
+const DEBOUNCE_TIMEOUT = 500;
+
 const createHashTagTemplate = (tagList) => {
   if (!tagList) {
     return undefined;
@@ -96,11 +113,11 @@ export default class Task extends AbstractComponent {
 
   setFavoritesButtonClickHandler(handler) {
     this.getElement().querySelector(`.card__btn--favorites`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, debounce(handler, DEBOUNCE_TIMEOUT));
   }
 
   setArchiveButtonClickHandler(handler) {
     this.getElement().querySelector(`.card__btn--archive`)
-      .addEventListener(`click`, handler);
+      .addEventListener(`click`, debounce(handler, DEBOUNCE_TIMEOUT));
   }
 }

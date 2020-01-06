@@ -4,6 +4,11 @@ import {COLOR_LIST, DAYS} from "../data/const";
 import AbstractSmartComponent from "./abstract-smart-component";
 import {formatTime, formatDate, isRepeating, isOverdueDate} from '../utils/date-time.js';
 
+const DefaultData = {
+  deleteButtonText: `Delete`,
+  saveButtonText: `Save`,
+};
+
 const isAllowableDescriptionLength = (description) => {
   const MIN_DESCRIPTION_LENGTH = 1;
   const MAX_DESCRIPTION_LENGTH = 140;
@@ -81,7 +86,7 @@ const createRepeatingDaysTemplate = (days, repeatingDays) => {
 
 const createTaskEditTemplate = (taskData, options = {}) => {
   const {dueDate, repeatingDays, tagList, color} = taskData;
-  const {isDateShowing, isRepeatingTask, activeRepeatingDays, currentDescription} = options;
+  const {isDateShowing, isRepeatingTask, activeRepeatingDays, currentDescription, externalData} = options;
   const description = he.encode(currentDescription);
 
   const date = (isDateShowing && dueDate) ? formatDate(dueDate) : ``;
@@ -94,6 +99,9 @@ const createTaskEditTemplate = (taskData, options = {}) => {
   const colorList = createColorListTemplate(COLOR_LIST, color);
   const hashTagList = createTagListTemplate(tagList);
   const repeatingDaysList = createRepeatingDaysTemplate(DAYS, activeRepeatingDays);
+
+  const deleteButtonText = externalData.deleteButtonText;
+  const saveButtonText = externalData.saveButtonText;
 
   return `<article class="card card--edit card--${color} ${repeatClass} ${deadlineClass}">
             <form class="card__form" method="get">
@@ -173,8 +181,8 @@ const createTaskEditTemplate = (taskData, options = {}) => {
                   </div>
                 </div>
                 <div class="card__status-btns">
-                  <button class="card__save" type="submit"${isDisableSaveButton ? ` disabled` : ``}>save</button>
-                  <button class="card__delete" type="button">delete</button>
+                  <button class="card__save" type="submit"${isDisableSaveButton ? ` disabled` : ``}>${saveButtonText}</button>
+                  <button class="card__delete" type="button">${deleteButtonText}</button>
                 </div>
               </div>
             </form>
@@ -190,7 +198,9 @@ export default class TaskEdit extends AbstractSmartComponent {
     this._isRepeatingTask = Object.values(taskData.repeatingDays).some(Boolean);
     this._activeRepeatingDays = Object.assign({}, taskData.repeatingDays);
     this._currentDescription = taskData.description;
+    this._externalData = DefaultData;
     this._submitHandler = null;
+    this._flatpickr = null;
     this._applyFlatpickr();
     this._subscribeOnEvents();
     this._deleteButtonClickHandler = null;
@@ -200,6 +210,7 @@ export default class TaskEdit extends AbstractSmartComponent {
     return createTaskEditTemplate(this._taskData, {
       isDateShowing: this._isDateShowing,
       isRepeatingTask: this._isRepeatingTask,
+      externalData: this._externalData,
       activeRepeatingDays: this._activeRepeatingDays,
       currentDescription: this._currentDescription,
     });
@@ -248,6 +259,11 @@ export default class TaskEdit extends AbstractSmartComponent {
       .addEventListener(`submit`, handler);
 
     this._submitHandler = handler;
+  }
+
+  setData(data) {
+    this._externalData = Object.assign({}, DefaultData, data);
+    this.rerender();
   }
 
   setDeleteButtonClickHandler(handler) {

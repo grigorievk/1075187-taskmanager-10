@@ -78,6 +78,11 @@ export default class BoardController {
     }
 
     const taskListElement = this._taskListElement.getElement();
+    const container = this._container.getElement();
+    if (!document.querySelector(`.board__tasks`)) {
+      render(container, this._taskListElement, RenderPosition.BEFOREEND);
+    }
+
     this._creatingTask = new TaskController(taskListElement, this._onDataChange, this._onViewChange);
     this._creatingTask.render(EmptyTask, TaskControllerMode.ADDING);
   }
@@ -145,18 +150,30 @@ export default class BoardController {
         taskController.destroy();
         this._updateTaskList(this._showingTasksCount);
       } else {
-        this._taskListModel.addTask(newTaskData);
-        taskController.render(newTaskData, TaskControllerMode.DEFAULT);
+        this._api.createTask(newTaskData)
+          .then((taskModel) => {
+            this._taskListModel.addTask(taskModel);
+            taskController.render(taskModel, TaskControllerMode.DEFAULT);
 
-        const destroyedTask = this._showedTaskControllers.pop();
-        destroyedTask.destroy();
+            const destroyedTask = this._showedTaskControllers.pop();
+            destroyedTask.destroy();
 
-        this._showedTaskControllers = [].concat(taskController, this._showedTaskControllers);
-        this._showingTasksCount = this._showedTaskControllers.length;
+            this._showedTaskControllers = [].concat(taskController, this._showedTaskControllers);
+            this._showingTasksCount = this._showedTaskControllers.length;
+          })
+          .catch(() => {
+            taskController.shake();
+          });
       }
     } else if (newTaskData === null) {
-      this._taskListModel.removeTask(oldTaskData.id);
-      this._updateTaskList(this._showingTasksCount);
+      this._api.deleteTask(oldTaskData.id)
+        .then(() => {
+          this._taskListModel.removeTask(oldTaskData.id);
+          this._updateTaskList(this._showingTasksCount);
+        })
+        .catch(() => {
+          taskController.shake();
+        });
     } else {
       this._api.updateTask(oldTaskData.id, newTaskData)
         .then((taskModel) => {
@@ -166,6 +183,9 @@ export default class BoardController {
             taskController.render(taskModel, TaskControllerMode.DEFAULT);
             this._updateTaskList(this._showingTasksCount);
           }
+        })
+        .catch(() => {
+          taskController.shake();
         });
     }
 

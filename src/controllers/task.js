@@ -66,13 +66,24 @@ export default class TaskController {
 
     this._taskEditComponent.setSubmitHandler((event) => {
       event.preventDefault();
+
+      this._taskEditComponent.setData({
+        saveButtonText: `Saving...`,
+      });
+
       const formData = this._taskEditComponent.getData();
       const data = parseFormData(formData);
 
       this._onDataChange(this, taskData, data);
     });
 
-    this._taskEditComponent.setDeleteButtonClickHandler(() => this._onDataChange(this, taskData, null));
+    this._taskEditComponent.setDeleteButtonClickHandler(() => {
+      this._taskEditComponent.setData({
+        deleteButtonText: `Deleting...`,
+      });
+
+      this._onDataChange(this, taskData, null);
+    });
 
     switch (mode) {
       case Mode.DEFAULT:
@@ -105,6 +116,21 @@ export default class TaskController {
     if (this._mode !== Mode.DEFAULT) {
       this._replaceEditToTask();
     }
+  }
+
+  shake() {
+    this._taskEditComponent.getElement().classList.add(`shake`);
+    this._taskComponent.getElement().classList.add(`shake`);
+
+    setTimeout(() => {
+      this._taskEditComponent.getElement().classList.remove(`shake`);
+      this._taskComponent.getElement().classList.remove(`shake`);
+
+      this._taskEditComponent.setData({
+        saveButtonText: `Save`,
+        deleteButtonText: `Delete`,
+      });
+    }, 600);
   }
 
   _replaceEditToTask() {

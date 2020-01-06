@@ -2,20 +2,18 @@ import he from "he";
 import AbstractComponent from './abstract-component.js';
 import {formatTime, formatDate, isOverdueDate} from '../utils/date-time.js';
 
-function debounce(f, ms) {
-  let isCooldown = false;
+function debounce(callback, time) {
+  let interval;
 
-  return function() {
-    if (isCooldown) {
-      return;
-    }
-
-    f.apply(this, arguments);
-    isCooldown = true;
-    setTimeout(() => isCooldown = false, ms);
+  return (...args) => {
+    clearTimeout(interval);
+    interval = setTimeout(() => {
+      interval = null;
+      callback(...args);
+    }, time);
   };
-
 }
+
 
 const DEBOUNCE_TIMEOUT = 500;
 
